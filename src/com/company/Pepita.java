@@ -1,83 +1,58 @@
 package com.company;
-import java.util.HashMap;
+
+import javax.xml.stream.Location;
 
 public class Pepita {
 
     private static final int FIXED_EXPENSE = 10;
 
     private int energy;
-    private int food;
-    private int distance;
+    private Locations location;
 
-    private int placeCode;
-    public int capital = 1;
-    public int rosario = 2;
-    public int cordoba = 3;
-
-
-    HashMap<Integer, String> Map = new HashMap<Integer, String>();
-
-    private void putLocations(){
-
-        Map.put(1, "Capital Federal");
-        Map.put(2, "Rosario");
-        Map.put(3, "Cordoba");
+    public Pepita(int energy, Locations location) {
+        this.energy = energy;
+        this.location = location;
     }
 
+    public Locations getLocation() {
+        return location;
+    }
 
-
-    public Pepita(int energy, int food, int distance, int placeCode) {
-        this.energy = energy;
-        this.food = food;
-        this.distance = distance;
-        this.placeCode = placeCode;
+    public void setLocation(Locations location) {
+        this.location = location;
     }
 
     @Override
     public String toString() {
-                return "Comí " + food + " gramos de comida para pajaros! " +
-                "Y recorrí " + distance + " kilometros" + "" +
-                " Energia final: " + energy +
-                " voy a ir a: " + getLocations(placeCode);
+        return "Tengo " + energy + " energia, y estoy en " + location;
     }
 
 
-    public int fly(){
-        energy = energy - distance - FIXED_EXPENSE;
+    public int fly(int distance) {
+        this.energy = calculateFinalEnergy(distance, this.energy);
         return energy;
     }
-    public int eat(){
-        energy = energy + food*4;
-        return energy;
-    }
-    public String getLocations(int placeCode){
-        if (placeCode == 1){
-            return "Capital Federal";
-        }
-        if (placeCode == 2){
-            return "Rosario!";
-        }
-        if (placeCode == 3){
-            return "Cordoba!";
-        }
-        return "I can´t fly there!";
-    }
-    public int getDistance(){
-        while (placeCode >= 3){
-            if (placeCode == 1){
-                return 1000;
-            }
-            if (placeCode == 2){
-                return 2000;
-            }
-            if (placeCode == 3){
-                return 3000;
-            }
-        }
-        return 0;
+
+    private int calculateFinalEnergy(int distance, int energy){
+        return energy - distance - FIXED_EXPENSE;
     }
 
-    public int travel(int travel){
-        
+    public int eat(int food) {
+        energy = energy + food * 4;
+        return energy;
     }
+
+    public void goTo(Locations location){
+        if (canGo(location)){
+            int distance = this.location.calculateDistance(location);
+            fly(distance);
+            this.setLocation(location);
+        }
+    }
+    private boolean canGo(Locations location){
+        int distance = this.location.calculateDistance(location);
+        int finalEnergy = calculateFinalEnergy(distance, this.energy);
+        return finalEnergy >= 0;
+    }
+
 }
